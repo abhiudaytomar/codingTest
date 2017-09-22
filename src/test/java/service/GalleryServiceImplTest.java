@@ -36,4 +36,8 @@ public class GalleryServiceImplTest {
         Art art = new Art.ArtBuilder(null, ArtType.PAINTING, "Leonard Di Vinci", LocalDate.of(1600,02,23)).build();
         Assert.assertTrue(galleryService.addArt(art));
     }
+
+    // Test Art object equivalence by setting all fields same.
+    // test Art object equivalence by setting non optional different
+
 }

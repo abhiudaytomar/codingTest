@@ -21,11 +21,11 @@ public interface GalleryService {
     List<String> getArtists();
 
     // returns all art by a specific artist.
-    List<String> getArtByArtist(String artistName);
+    List<Art> getArtByArtist(String artistName);
 
     // returns all art with creation date in the past year.
     List<Art> getRecentArt();
 
     // returns all art between an upper and lower price limit. Both limits should be optional. Ignore art with no asking price.
-    List<Art> getArtByPrice(BigDecimal priceLimitMin, BigDecimal priceLimitMax);
+    List<Art> getArtByPrice(Long priceLimitMin, Long priceLimitMax);
 }

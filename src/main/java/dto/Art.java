@@ -1,6 +1,8 @@
 package dto;
 
 import constants.ArtType;
+import exceptions.ConstraintViolationException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -10,8 +12,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 public final class Art {
@@ -21,10 +23,10 @@ public final class Art {
     private final ArtType artType;
     @NotNull(message = "Artist name must be provided")
     private final String artistName;
-    @NotNull(message = "Art creation date must be provided")
-    private final LocalDate creationDate;
+    @NotNull(message = "Please provide creation date or use right constructor")
+    private LocalDate creationDate;
 
-    private final BigDecimal price;
+    private final Long price;
 
     private Art(ArtBuilder artBuilder) {
         this.name = artBuilder.name;
@@ -38,8 +40,15 @@ public final class Art {
         private final String name;
         private final ArtType artType;
         private final String artistName;
-        private final LocalDate creationDate;
-        private BigDecimal price;
+        private LocalDate creationDate;
+        private Long price;
+
+        public ArtBuilder(String name, ArtType artType, String artistName) {
+            this.name = name;
+            this.artType = artType;
+            this.artistName = artistName;
+            this.creationDate = LocalDate.now();
+        }
 
         public ArtBuilder(String name, ArtType artType, String artistName, LocalDate creationDate) {
             this.name = name;
@@ -48,7 +57,12 @@ public final class Art {
             this.creationDate = creationDate;
         }
 
-        public ArtBuilder price(BigDecimal price) {
+        public ArtBuilder creationDate(LocalDate creationDate) {
+            this.creationDate = creationDate;
+            return this;
+        }
+
+        public ArtBuilder price(Long price) {
             this.price = price;
             return this;
         }
@@ -63,9 +77,36 @@ public final class Art {
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             Validator validator = factory.getValidator();
             Set<ConstraintViolation<Art>> validationResult = validator.validate(art);
+            if (validationResult.size() > 0) {
+                Set<String> violationMessages = new HashSet<>();
 
-            validationResult.isEmpty();
+                for (ConstraintViolation<Art> constraintViolation : validationResult) {
+                    violationMessages.add(constraintViolation.getPropertyPath() + ": " + constraintViolation.getMessage());
+                }
+
+                throw new ConstraintViolationException("Validation failed:\n" + StringUtils.join(violationMessages, "\n"));
+            }
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ArtType getArtType() {
+        return artType;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
     @Override
@@ -96,25 +137,5 @@ public final class Art {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ArtType getArtType() {
-        return artType;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public String getArtistName() {
-        return artistName;
-    }
-
-    public LocalDate getCreationDate() {
-        return creationDate;
     }
 }

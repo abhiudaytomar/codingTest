@@ -63,6 +63,7 @@ public final class Art {
             ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
             Validator validator = factory.getValidator();
             Set<ConstraintViolation<Art>> validationResult = validator.validate(art);
+
             validationResult.isEmpty();
         }
     }

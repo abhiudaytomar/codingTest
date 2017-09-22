@@ -1,3 +1,5 @@
+package service;
+
 import constants.ArtType;
 import dto.Art;
 import org.junit.Assert;

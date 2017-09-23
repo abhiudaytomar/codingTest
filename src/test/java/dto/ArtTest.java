@@ -15,9 +15,9 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.*;
 
 public class ArtTest {
-    private final int YEAR_1600 = 1600;
-    private final int MONTH_02 = 2;
-    private final int DAY_23 = 23;
+    private static final int YEAR_1600 = 1600;
+    private static final int MONTH_02 = 2;
+    private static final int DAY_23 = 23;
     private final BigInteger PRICE_IN_PENCE = new BigInteger("123400");
 
     @Rule
@@ -29,7 +29,7 @@ public class ArtTest {
         thrown.expectMessage(startsWith("Validation failed"));
         thrown.expectMessage(containsString("Art name must be provided"));
 
-        Art art = new ArtBuilder(null, ArtType.PAINTING, "Leonard Di Vinci", LocalDate.now()).build();
+        new ArtBuilder(null, ArtType.PAINTING, "Leonard Di Vinci", LocalDate.now()).build();
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ArtTest {
         thrown.expect(ConstraintViolationException.class);
         thrown.expectMessage(startsWith("Validation failed"));
         thrown.expectMessage(containsString("Art type must be provided"));
-        Art art = new ArtBuilder("Mona lisa", null, "Leonard Di Vinci", LocalDate.now()).build();
+        new ArtBuilder("Mona lisa", null, "Leonard Di Vinci", LocalDate.now()).build();
     }
 
     @Test
@@ -45,7 +45,7 @@ public class ArtTest {
         thrown.expect(ConstraintViolationException.class);
         thrown.expectMessage(startsWith("Validation failed"));
         thrown.expectMessage(containsString("Artist name must be provided"));
-        Art art = new ArtBuilder("Mona lisa", ArtType.PAINTING, null, LocalDate.now()).build();
+        new ArtBuilder("Mona lisa", ArtType.PAINTING, null, LocalDate.now()).build();
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ArtTest {
         thrown.expect(ConstraintViolationException.class);
         thrown.expectMessage(startsWith("Validation failed"));
         thrown.expectMessage(containsString("Please provide creation date or use right constructor"));
-        Art art = new ArtBuilder("Mona lisa", ArtType.PAINTING, "Leonard Di Vinci", null).build();
+        new ArtBuilder("Mona lisa", ArtType.PAINTING, "Leonard Di Vinci", null).build();
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ArtTest {
         thrown.expectMessage(containsString("Art type must be provided"));
         thrown.expectMessage(containsString("Art name must be provided"));
         thrown.expectMessage(containsString("Please provide creation date or use right constructor"));
-        Art art = new ArtBuilder(null, null, null, null).build();
+        new ArtBuilder(null, null, null, null).build();
     }
 
     @Test

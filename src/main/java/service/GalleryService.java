@@ -2,30 +2,66 @@ package service;
 
 import dto.Art;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public interface GalleryService {
+    /**
+     * add a piece of art to the gallery
+     *
+     * @param art
+     * @return
+     */
 
-    //add a piece of art to the gallery
     boolean addArt(Art art);
 
-    //remove a piece of art from the gallery
+    /**
+     * remove a piece of art from the gallery
+     *
+     * @param art
+     * @return
+     */
+
     boolean deleteArt(Art art);
 
-    // returns all art currently in the gallery
-    List<Art> getAllArt();
+    /**
+     * returns all art currently in the gallery
+     *
+     * @return
+     */
+    Set<Art> getAllArt();
 
-    //returns the names of all of the artists with art currently in the gallery in alphabetical order.
+    /**
+     * returns the names of all of the artists with art currently in the gallery in alphabetical order.
+     * returns distinct names.
+     * @return
+     */
     List<String> getArtists();
 
-    // returns all art by a specific artist.
-    List<Art> getArtByArtist(String artistName);
+    /**
+     * returns all art by a specific artist.
+     *
+     * @param artistName
+     * @return
+     */
+    Set<Art> getArtByArtist(String artistName);
 
-    // returns all art with creation date in the past year.
-    List<Art> getRecentArt();
+    /**
+     * returns all art with creation date in the past year.
+     *
+     * @return
+     */
 
-    // returns all art between an upper and lower price limit. Both limits should be optional. Ignore art with no asking price.
-    List<Art> getArtByPrice(Long priceLimitMin, Long priceLimitMax);
+    Set<Art> getRecentArt();
+
+    /**
+     * returns all art between an upper and lower price limit. Both limits should be optional. Ignore art with no asking price.
+     *
+     * @param priceLimitMin
+     * @param priceLimitMax
+     * @return
+     */
+
+    Set<Art> getArtByPrice(BigInteger priceLimitMin, BigInteger priceLimitMax);
 }

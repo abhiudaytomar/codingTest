@@ -12,21 +12,29 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This Class stores information about an Art
+ * creationDate :- If no date is provided then today's date is assigned
+ */
 public final class Art {
     @NotNull(message = "Art name must be provided")
     private final String name;
+
     @NotNull(message = "Art type must be provided")
     private final ArtType artType;
+
     @NotNull(message = "Artist name must be provided")
     private final String artistName;
+
+    private final BigInteger price;
+
     @NotNull(message = "Please provide creation date or use right constructor")
     private LocalDate creationDate;
-
-    private final Long price;
 
     private Art(ArtBuilder artBuilder) {
         this.name = artBuilder.name;
@@ -34,59 +42,6 @@ public final class Art {
         this.artistName = artBuilder.artistName;
         this.creationDate = artBuilder.creationDate;
         this.price = artBuilder.price;
-    }
-
-    public static class ArtBuilder {
-        private final String name;
-        private final ArtType artType;
-        private final String artistName;
-        private LocalDate creationDate;
-        private Long price;
-
-        public ArtBuilder(String name, ArtType artType, String artistName) {
-            this.name = name;
-            this.artType = artType;
-            this.artistName = artistName;
-            this.creationDate = LocalDate.now();
-        }
-
-        public ArtBuilder(String name, ArtType artType, String artistName, LocalDate creationDate) {
-            this.name = name;
-            this.artType = artType;
-            this.artistName = artistName;
-            this.creationDate = creationDate;
-        }
-
-        public ArtBuilder creationDate(LocalDate creationDate) {
-            this.creationDate = creationDate;
-            return this;
-        }
-
-        public ArtBuilder price(Long price) {
-            this.price = price;
-            return this;
-        }
-
-        public Art build() {
-            Art art = new Art(this);
-            validate(art);
-            return art;
-        }
-
-        private void validate(Art art) {
-            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-            Validator validator = factory.getValidator();
-            Set<ConstraintViolation<Art>> validationResult = validator.validate(art);
-            if (validationResult.size() > 0) {
-                Set<String> violationMessages = new HashSet<>();
-
-                for (ConstraintViolation<Art> constraintViolation : validationResult) {
-                    violationMessages.add(constraintViolation.getPropertyPath() + ": " + constraintViolation.getMessage());
-                }
-
-                throw new ConstraintViolationException("Validation failed:\n" + StringUtils.join(violationMessages, "\n"));
-            }
-        }
     }
 
     public String getName() {
@@ -97,7 +52,7 @@ public final class Art {
         return artType;
     }
 
-    public Long getPrice() {
+    public BigInteger getPrice() {
         return price;
     }
 
@@ -137,5 +92,58 @@ public final class Art {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    public static class ArtBuilder {
+        private final String name;
+        private final ArtType artType;
+        private final String artistName;
+        private LocalDate creationDate;
+        private BigInteger price;
+
+        public ArtBuilder(String name, ArtType artType, String artistName) {
+            this.name = name;
+            this.artType = artType;
+            this.artistName = artistName;
+            this.creationDate = LocalDate.now();
+        }
+
+        public ArtBuilder(String name, ArtType artType, String artistName, LocalDate creationDate) {
+            this.name = name;
+            this.artType = artType;
+            this.artistName = artistName;
+            this.creationDate = creationDate;
+        }
+
+        public ArtBuilder creationDate(LocalDate creationDate) {
+            this.creationDate = creationDate;
+            return this;
+        }
+
+        public ArtBuilder price(BigInteger price) {
+            this.price = price;
+            return this;
+        }
+
+        public Art build() {
+            Art art = new Art(this);
+            validate(art);
+            return art;
+        }
+
+        private void validate(Art art) {
+            ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+            Validator validator = factory.getValidator();
+            Set<ConstraintViolation<Art>> validationResult = validator.validate(art);
+            if (validationResult.size() > 0) {
+                Set<String> violationMessages = new HashSet<>();
+
+                for (ConstraintViolation<Art> constraintViolation : validationResult) {
+                    violationMessages.add(constraintViolation.getPropertyPath() + ": " + constraintViolation.getMessage());
+                }
+
+                throw new ConstraintViolationException("Validation failed:\n" + StringUtils.join(violationMessages, "\n"));
+            }
+        }
     }
 }

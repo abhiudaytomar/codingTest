@@ -3,6 +3,7 @@ package service;
 import constants.ArtType;
 import dto.Art;
 import exceptions.InvalidPriceRangeException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import static org.junit.Assert.*;
 
@@ -20,11 +22,34 @@ public class GalleryServiceImplTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    private GalleryService galleryService;
+    private GalleryServiceImpl galleryService;
 
     @Before
     public void setUp() {
-        galleryService = new GalleryServiceImpl();
+        galleryService = GalleryServiceImpl.getInstance();
+    }
+
+    @After
+    public void cleanup() {
+        galleryService.setInstanceNull();
+    }
+
+    @Test
+    public void test_getInstance_ReturnsOnlyOneInstance() throws Exception {
+     galleryService.setInstanceNull();
+     GalleryService instance1;
+     GalleryService instance2;
+     GalleryService instance3;
+     Callable<GalleryService> threadOne = () -> GalleryServiceImpl.getInstance();
+     Callable<GalleryService> threadTwo = () -> GalleryServiceImpl.getInstance();
+     Callable<GalleryService> threadThree = () -> GalleryServiceImpl.getInstance();
+
+     instance1 = threadOne.call();
+     instance2 = threadTwo.call();
+     instance3 = threadThree.call();
+
+     assertTrue(instance1.equals(instance2));
+     assertTrue(instance2.equals(instance3));
     }
 
     @Test

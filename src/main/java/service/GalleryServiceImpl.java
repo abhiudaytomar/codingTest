@@ -19,11 +19,25 @@ import java.util.stream.Collectors;
  * @see service.GalleryService
  */
 public class GalleryServiceImpl implements GalleryService {
-    private Set<Art> arts;
+    private Set<Art> arts = new LinkedHashSet<>();
     private int DAYS_365 = 365;
+    private volatile static GalleryServiceImpl galleryService;
 
-    public GalleryServiceImpl() {
-        arts = new LinkedHashSet<>();
+    private GalleryServiceImpl() { }
+
+    public static GalleryServiceImpl getInstance() {
+        if (galleryService == null) {
+            synchronized (GalleryServiceImpl.class) {
+                if(galleryService == null) {
+                    galleryService = new GalleryServiceImpl();
+                }
+            }
+        }
+        return galleryService;
+    }
+
+    public static void setInstanceNull() {
+        galleryService = null;
     }
 
     @Override
